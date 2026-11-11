@@ -19,6 +19,13 @@ final class Api
 {
     private const array READS = ['session', 'folders', 'messages', 'message', 'compose', 'contacts', 'poll', 'problems'];
 
+    /**
+     * Reads the interface makes on its own, on a timer, rather than because
+     * somebody did something. They do not count as activity: an open tab left
+     * alone still reaches the idle timeout.
+     */
+    private const array BACKGROUND = ['poll'];
+
     private const array WRITES = [
         'flag', 'move', 'delete', 'empty', 'mark-all-read', 'folder-create', 'folder-rename', 'folder-delete',
         'send', 'draft', 'discard-draft', 'settings', 'trust', 'discard-upload', 'forget-contact', 'clear-problems',
@@ -38,7 +45,7 @@ final class Api
      */
     public function handle(string $method, string $action, array $query, array $body, ?string $csrfToken = null): array
     {
-        $grant = $this->session->grant();
+        $grant = $this->session->grant(! in_array($action, self::BACKGROUND, true));
 
         if ($grant === null) {
             throw new UserError('Your session has ended. Sign in again.', 401);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use MailSimply\Http;
 use MailSimply\Log;
+use MailSimply\LoginThrottle;
 use MailSimply\Session;
 use MailSimply\SignOn;
 
@@ -40,11 +41,19 @@ if (isset($_GET['start'])) {
 
 $token = (string) ($_GET['token'] ?? '');
 
-try {
-    $mailbox = (new SignOn($config))->redeem($token, $session->signOnProof());
-} catch (Throwable $e) {
-    Log::error('Redeeming a sign-on token failed.', ['error' => $e->getMessage()]);
-    $mailbox = null;
+// Every token redeemed is a request to the panel, which only answers this host
+// so often; a client sending made-up tokens would otherwise spend that for
+// everybody. Counted per client, with the login form's per-client limit.
+$throttle = new LoginThrottle($config->string('storage.throttle'), 0, $config->int('login.max_attempts_per_client'));
+$client = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+$mailbox = null;
+
+if (! $throttle->blocked('', $client)) {
+    try {
+        $mailbox = (new SignOn($config))->redeem($token, $session->signOnProof());
+    } catch (Throwable $e) {
+        Log::error('Redeeming a sign-on token failed.', ['error' => $e->getMessage()]);
+    }
 }
 
 if ($mailbox === null) {
@@ -55,6 +64,7 @@ if ($mailbox === null) {
         exit;
     }
 
+    $throttle->clientFailed($client);
     $refuse();
 }
 

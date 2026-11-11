@@ -973,7 +973,8 @@ final class Mailbox
             'type' => $part->isAttachedMessage() ? 'message/rfc822' : $part->mimeType(),
             // Encoded size; base64 is a third larger than what it carries.
             'size' => $part->encoding === 'base64' ? (int) floor($part->size * 3 / 4) : $part->size,
-            'image' => in_array($part->mimeType(), ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], true),
+            // The types attachment.php shows in place; anything else is a download.
+            'image' => in_array($part->mimeType(), ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/bmp'], true),
         ];
     }
 

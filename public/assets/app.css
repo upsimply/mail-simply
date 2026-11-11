@@ -172,10 +172,13 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 
 .topbar {
     height: var(--topbar); flex: none;
-    display: flex; align-items: center; gap: 14px; padding: 0 12px 0 14px;
+    display: flex; align-items: center; gap: 14px; padding: 0 12px 0 18px;
     background: var(--surface); border-bottom: 1px solid var(--border);
 }
-.brand { display: flex; align-items: center; gap: 8px; width: 206px; flex: none; }
+/* The logo sits over the folder icons (panel padding 10 + folder padding 8),
+   and the search box starts where the list's content does: the sidebar's
+   width plus the list's own 12px, less the bar's padding and gap. */
+.brand { display: flex; align-items: center; gap: 8px; width: calc(232px + 12px - 18px - 14px); flex: none; }
 .brand strong { font-size: 15px; }
 .menu-toggle { display: none; }
 
@@ -201,7 +204,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .compose-button { min-height: 40px; font-weight: 600; box-shadow: 0 2px 8px rgba(41, 87, 200, .25); }
 .folders { list-style: none; margin: 0; padding: 0; }
 .folder {
-    width: 100%; display: flex; align-items: center; gap: 8px;
+    position: relative; width: 100%; display: flex; align-items: center; gap: 8px;
     padding: 6px 8px 6px calc(8px + var(--depth, 0) * 14px);
     border: 0; border-radius: var(--radius); background: none; cursor: pointer; text-align: left; color: var(--text);
 }
@@ -212,7 +215,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .folder-icon { display: inline-flex; color: var(--muted); }
 .folder-icon svg { width: 17px; height: 17px; }
 .folder-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.twisty { width: 12px; margin-left: -14px; color: var(--muted); font-size: 11px; cursor: pointer; }
+.twisty { position: absolute; left: calc(var(--depth, 0) * 14px - 6px); width: 12px; text-align: center; color: var(--muted); font-size: 11px; cursor: pointer; }
 .count { font-size: 12px; font-weight: 600; color: var(--accent); }
 .count.muted { color: var(--muted); font-weight: 400; }
 .folder-tools { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 0 8px; }
@@ -228,32 +231,36 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .list-title { display: flex; align-items: baseline; gap: 10px; }
 .list-title h2 { margin: 0; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .list-filters { display: flex; align-items: center; gap: 6px; margin: 8px 0; }
+.list-filters .icon-button { margin-right: -10px; }
 .bulk { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 4px 0 6px; }
 .bulk-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
 .check { display: inline-flex; align-items: center; padding: 4px; cursor: pointer; }
 .check input { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); cursor: pointer; }
 
 .messages { flex: 1; min-height: 0; overflow: auto; list-style: none; margin: 0; padding: 0; }
-.messages li { position: relative; display: flex; align-items: flex-start; gap: 2px; padding: 0 6px 0 8px; border-bottom: 1px solid var(--border); }
+.messages li { position: relative; display: flex; align-items: flex-start; gap: 2px; padding: 0 6px 0 12px; border-bottom: 1px solid var(--border); }
 .messages li:hover { background: var(--hover); }
 .messages li.active { background: var(--selected); }
 .messages li.selected { background: var(--accent-soft); }
-.messages li .check { margin-top: 10px; }
+/* Rows are laid out on a 20px line: the first line's middle is 9 + 10px down. */
+.messages li .check { margin-top: 7.5px; }
 .message-row {
     flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;
     padding: 9px 4px; border: 0; background: none; text-align: left; cursor: pointer; color: var(--text);
 }
-.row-top { display: flex; align-items: center; gap: 6px; }
+.row-top { display: flex; align-items: center; gap: 6px; line-height: 20px; }
 .correspondent { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-icons { display: inline-flex; gap: 2px; color: var(--muted); }
 .row-icons svg { width: 14px; height: 14px; }
 .date { flex: none; font-size: 12px; color: var(--muted); }
 .subject, .preview { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subject { line-height: 20px; }
 .preview { font-size: 12.5px; color: var(--muted); }
 .messages li.unread .correspondent, .messages li.unread .subject { font-weight: 650; }
-.messages li.unread::before { content: ""; position: absolute; left: 2px; top: 16px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.messages li.unread::before { content: ""; position: absolute; left: 3px; top: 16.5px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 .messages li.unread .date { color: var(--accent); font-weight: 600; }
-.star { margin-top: 26px; padding: 4px; border: 0; background: none; color: var(--border); cursor: pointer; }
+/* On the subject line: 9 + 20 + 1 + 10px down, less half its 24px. */
+.star { margin-top: 28px; padding: 4px; border: 0; background: none; color: var(--border); cursor: pointer; }
 .star:hover { color: var(--muted); }
 .star.on { color: var(--star); }
 .star.on svg { fill: currentColor; }
@@ -272,7 +279,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .reader { max-width: 980px; margin: 0 auto; padding: 0 0 32px; }
 .reader-toolbar {
     position: sticky; top: 0; z-index: 5;
-    display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+    display: flex; align-items: center; gap: 6px; padding: 8px 20px;
     background: var(--surface); border-bottom: 1px solid var(--border);
 }
 .toolbar-group { display: flex; gap: 6px; }
@@ -363,7 +370,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .attachment-chip { display: inline-flex; align-items: center; gap: 8px; max-width: 280px; padding: 4px 6px 4px 10px; border: 1px solid var(--border); border-radius: var(--radius); }
 .attachment-chip.failed { border-color: var(--danger); color: var(--danger); }
 .attachment-chip button { border: 0; background: none; cursor: pointer; color: var(--muted); font-size: 16px; line-height: 1; }
-.composer-foot { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
+.composer-foot { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-top: 1px solid var(--border); }
 .composer-foot .button.primary { min-width: 96px; }
 .attach input { display: none; }
 .drop-hint { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(41, 87, 200, .08); pointer-events: none; font-weight: 600; color: var(--accent); border-radius: 12px 12px 0 0; }
@@ -404,12 +411,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 
 @media (max-width: 1200px) {
     .layout { grid-template-columns: 210px minmax(280px, 340px) minmax(0, 1fr); }
-    .brand { width: auto; }
+    .brand { width: calc(210px + 12px - 18px - 14px); }
     .account-address { display: none; }
 }
 
 @media (max-width: 899px) {
     :root { --topbar: 50px; }
+    .topbar { padding-left: 8px; }
+    .brand { width: auto; }
     .menu-toggle { display: inline-flex; }
     .brand strong { display: none; }
     .search-body { display: none; }
@@ -429,13 +438,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
     .reader-toolbar .back { display: inline-flex; }
     .toolbar-group .button { padding: 0 8px; }
     .reader-head { padding: 12px 14px 6px; }
-    .notice, .attachments { margin-left: 14px; margin-right: 14px; padding-left: 0; padding-right: 0; }
-    .body-frame { margin: 0 8px; }
+    /* One 14px inset for everything in the reader. The notice keeps its own
+       padding: without it the text ran into the edge of its box. */
+    .notice { margin-left: 14px; margin-right: 14px; }
+    .attachments { padding-left: 14px; padding-right: 14px; }
+    .body-frame { margin: 0 14px; }
     .attachment { width: 100%; }
     .composer { inset: 0; width: 100%; border-radius: 0; }
     .composer-fields { padding: 0 12px; }
     .field-label { width: 44px; }
     .suggestions { left: 0; }
     .messages li .check { display: none; }
+    /* Without their checkboxes, rows start where the list title does. */
+    .messages li { padding-left: 8px; }
     .bulk .check { display: inline-flex; }
 }

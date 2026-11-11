@@ -58,6 +58,14 @@ final class SignOn
             return null;
         }
 
+        // Where every token has to be bound, one opened by a browser holding
+        // no proof cannot succeed, so the panel is not asked: each request it
+        // is asked costs a share of what it will answer this host, and the
+        // link is reachable by anyone.
+        if ($proof === null && $this->config->bool('sso.require_binding')) {
+            return null;
+        }
+
         $url = rtrim($this->config->string('sso.url'), '/').'/'.$token;
         [$status, $body] = $this->post($url, $this->config->string('sso.secret'), max(1, $this->config->int('sso.timeout')));
 

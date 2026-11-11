@@ -52,6 +52,17 @@ final class LoginThrottle
         }
     }
 
+    /**
+     * Count a failure against the client alone: a sign-on link that did not
+     * redeem names no address to hold it against.
+     */
+    public function clientFailed(string $client): void
+    {
+        if ($client !== '') {
+            $this->record('client', $client);
+        }
+    }
+
     public function succeeded(string $address): void
     {
         @unlink($this->file('address', strtolower($address)));

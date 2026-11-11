@@ -93,9 +93,12 @@ final class Session
      * The mailbox this session is for, with its password decrypted, or null
      * when signed out or timed out.
      *
+     * @param  bool  $touch  whether this request is the user doing something; the
+     *                       interface's background polling is not, and must not keep
+     *                       an unattended session from reaching its idle timeout
      * @return array{address: string, name: string, master: bool, password: ?string}|null
      */
-    public function grant(): ?array
+    public function grant(bool $touch = true): ?array
     {
         $this->start();
 
@@ -127,7 +130,9 @@ final class Session
             $grant['password'] = $password;
         }
 
-        $_SESSION['seen_at'] = $now;
+        if ($touch) {
+            $_SESSION['seen_at'] = $now;
+        }
 
         return $grant;
     }

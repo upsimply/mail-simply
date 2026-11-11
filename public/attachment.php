@@ -70,7 +70,9 @@ try {
             $started = true;
             header('Content-Type: '.($inline ? $type : (preg_match('#^[a-z0-9.+-]+/[a-z0-9.+-]+$#i', $type) === 1 ? $type : 'application/octet-stream')));
             header('Content-Disposition: '.Http::disposition($inline ? 'inline' : 'attachment', $name));
-            header('Cache-Control: private, max-age=3600');
+            // Not kept in the browser's cache: on a shared computer, an
+            // attachment must not outlive the session that opened it.
+            header('Cache-Control: private, no-store');
         }
 
         echo $chunk;

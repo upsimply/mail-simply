@@ -117,7 +117,7 @@ final class Address
      */
     public static function isValid(string $email): bool
     {
-        if (strlen($email) > 254 || preg_match('/[\s<>(),;:"\\\\\[\]]/', $email) === 1) {
+        if (strlen($email) > 254 || preg_match('/[\s\x00-\x1f\x7f<>(),;:"\\\\\[\]]/', $email) === 1) {
             return false;
         }
 

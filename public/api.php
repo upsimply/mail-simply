@@ -11,7 +11,9 @@ $config = require dirname(__DIR__).'/bootstrap.php';
 mail_simply_headers();
 
 $session = new Session($config);
-$lang = Http::lang($config, $session->grant()['address'] ?? null);
+// Read without counting as activity: whether this request does is the API's
+// to decide, by what it asks for.
+$lang = Http::lang($config, $session->grant(false)['address'] ?? null);
 $method = (string) ($_SERVER['REQUEST_METHOD'] ?? 'GET');
 $body = [];
 
